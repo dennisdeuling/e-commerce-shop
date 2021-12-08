@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Container, Typography, Button, Grid } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 
@@ -6,7 +6,10 @@ import useStyles from './style';
 import { germanPrice } from '../../lib/helperFunctions';
 import CartItem from './cartitem/CartItem';
 
-const Cart = ({ cart, handleUpdateCartQty, handleRemoveFromCart, handleEmptyCart }) => {
+import { CartContext } from '../../context/CartContext';
+
+const Cart = () => {
+	const cart = useContext(CartContext);
 	const classes = useStyles();
 
 	const EmptyCart = () => {
@@ -29,8 +32,8 @@ const Cart = ({ cart, handleUpdateCartQty, handleRemoveFromCart, handleEmptyCart
 							<Grid item xs={12} sm={4} key={item.id}>
 								<CartItem
 									item={item}
-									handleUpdateCartQty={handleUpdateCartQty}
-									handleRemoveFromCart={handleRemoveFromCart}
+									handleUpdateCartQty={cart.handleUpdateCartQty}
+									handleRemoveFromCart={cart.handleRemoveFromCart}
 								/>
 							</Grid>
 						);
@@ -47,7 +50,7 @@ const Cart = ({ cart, handleUpdateCartQty, handleRemoveFromCart, handleEmptyCart
 							type="button"
 							variant="contained"
 							color="secondary"
-							onClick={handleEmptyCart}
+							onClick={cart.handleEmptyCart}
 						>
 							Empty cart
 						</Button>
@@ -69,6 +72,8 @@ const Cart = ({ cart, handleUpdateCartQty, handleRemoveFromCart, handleEmptyCart
 	};
 
 	if (!cart.line_items.length) return 'Loading ...';
+
+	console.log(cart);
 
 	return (
 		<Container>

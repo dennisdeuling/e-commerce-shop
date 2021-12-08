@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
 	Card,
 	CardMedia,
@@ -12,8 +12,10 @@ import { AddShoppingCart } from '@material-ui/icons';
 import useStyles from './style';
 
 import { germanPrice } from '../../../lib/helperFunctions';
+import { CartContext } from '../../../context/CartContext';
 
-const Product = ({ product, onAddToCart }) => {
+const Product = ({ product }) => {
+	const { handleAddToCart } = useContext(CartContext);
 	const classes = useStyles();
 
 	return (
@@ -33,7 +35,7 @@ const Product = ({ product, onAddToCart }) => {
 				/>
 			</CardContent>
 			<CardActions disableSpacing className={classes.cardActions}>
-				<IconButton aria-label="Add to Cart" onClick={() => onAddToCart(product.id, 1)}>
+				<IconButton aria-label="Add to Cart" onClick={() => handleAddToCart(product.id, 1)}>
 					<AddShoppingCart />
 				</IconButton>
 			</CardActions>
