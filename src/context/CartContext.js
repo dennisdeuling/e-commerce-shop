@@ -42,19 +42,17 @@ export const CartProvider = ({ children }) => {
 	}, []);
 
 	return (
-		<React.Fragment>
-			<CartContext.Provider
-				value={{
-					...cart,
-					handleAddToCart,
-					handleUpdateCartQty,
-					handleRemoveFromCart,
-					handleEmptyCart,
-					refreshCart
-				}}
-			>
-				{children}
-			</CartContext.Provider>
-		</React.Fragment>
+		<CartContext.Provider
+			value={{
+				...cart,
+				handleAddToCart,
+				handleUpdateCartQty,
+				handleRemoveFromCart,
+				handleEmptyCart,
+				refreshCart
+			}}
+		>
+			{children}
+		</CartContext.Provider>
 	);
 };

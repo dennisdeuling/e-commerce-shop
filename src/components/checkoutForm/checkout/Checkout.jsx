@@ -1,30 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import {
-	Paper,
-	Stepper,
-	Step,
-	StepLabel,
-	Typography,
-	CircularProgress,
-	Divider,
-	Button,
-	CssBaseline
-} from '@material-ui/core';
+import React, { useState, useEffect, useContext } from 'react';
+import { Paper, Stepper, Step, StepLabel, Typography, CssBaseline } from '@material-ui/core';
 
 import { commerce } from '../../../lib/commerce';
 
 import useStyles from './style';
 import AddressForm from './AdressForm/AddressForm';
 import PaymentForm from './PaymentForm/PaymentForm';
-import { Link } from 'react-router-dom';
+import Confirmation from './Confirmation/Confirmation';
+
+import { CartContext } from '../../../context/CartContext';
 
 const steps = ['Shipping address', 'Payment details'];
 
-const Checkout = ({ cart, order, errorMessage, handleCaptureCheckout }) => {
+const Checkout = () => {
+	const cart = useContext(CartContext);
+	const [order, setOrder] = useState({});
 	const [activeStep, setActiveStep] = useState(0);
 	const [checkoutToken, setCheckoutToken] = useState(null);
 	const [shippingData, setShippingData] = useState({});
 	const classes = useStyles();
+
+	const handleCaptureCheckout = async (checkoutTokenId, newOrder) => {
+		try {
+			const incomingOrder = await commerce.checkout.capture(checkoutTokenId, newOrder);
+			setOrder(incomingOrder);
+			cart.refreshCart();
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
 	useEffect(() => {
 		const generateToken = async () => {
@@ -35,7 +39,7 @@ const Checkout = ({ cart, order, errorMessage, handleCaptureCheckout }) => {
 				console.log(error);
 			}
 		};
-		generateToken();
+		if (cart.total_items) generateToken();
 	}, [cart]);
 
 	const nextStep = () => setActiveStep(prevActiveStep => prevActiveStep + 1);
@@ -61,27 +65,6 @@ const Checkout = ({ cart, order, errorMessage, handleCaptureCheckout }) => {
 			/>
 		);
 
-	const Confirmation = () =>
-		order.customer ? (
-			<React.Fragment>
-				<div>
-					<Typography variant="5">
-						Thank you for your purchase {order.customer.firstname} {order.customer.lastname}
-					</Typography>
-					<Divider className={classes.divider} />
-					<Typography variant="subtitle2">Order ref: {order.customer_reference}</Typography>
-				</div>
-				<br />
-				<Button component={Link} to="/" variant="outlined" type="button">
-					Back to home
-				</Button>
-			</React.Fragment>
-		) : (
-			<div className={classes.spinner}>
-				<CircularProgress />
-			</div>
-		);
-
 	return (
 		<React.Fragment>
 			<CssBaseline />
@@ -101,7 +84,11 @@ const Checkout = ({ cart, order, errorMessage, handleCaptureCheckout }) => {
 								);
 							})}
 						</Stepper>
-						{activeStep === steps.length ? <Confirmation /> : checkoutToken && <Form />}
+						{activeStep === steps.length ? (
+							<Confirmation order={order} classes={classes} />
+						) : (
+							checkoutToken && <Form />
+						)}
 					</Paper>
 				</main>
 			</div>

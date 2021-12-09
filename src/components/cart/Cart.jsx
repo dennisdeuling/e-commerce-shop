@@ -73,8 +73,6 @@ const Cart = () => {
 
 	if (!cart.line_items.length) return 'Loading ...';
 
-	console.log(cart);
-
 	return (
 		<Container>
 			{/*TODO: delete this div maybe*/}

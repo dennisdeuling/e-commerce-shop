@@ -49,7 +49,7 @@ const PaymentForm = ({
 					shipping_method: shippingData.shippingOption
 				},
 				payment: {
-					gateway: 'stripe',
+					gateway: 'gway_JwrgDAaDPLXvoP',
 					stripe: {
 						payment_method_id: paymentMethod.id
 					}
